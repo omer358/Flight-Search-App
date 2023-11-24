@@ -19,7 +19,6 @@ abstract class AirPortDatabase : RoomDatabase() {
         @Volatile
         private var Instance: AirPortDatabase? = null
 
-
         fun getDatabase(context: Context): AirPortDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
@@ -31,7 +30,6 @@ abstract class AirPortDatabase : RoomDatabase() {
                     .createFromAsset("database/flight_search.db")
                     .build()
                     .also { Instance = it }
-
             }
         }
     }
