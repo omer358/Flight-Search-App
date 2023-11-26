@@ -1,5 +1,6 @@
 package com.example.flightsearchapp.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+private const val TAG = "FlightSearchViewModel"
 class FlightSearchViewModel(
     private val flightRepository: FlightRepository,
 ) : ViewModel() {
@@ -26,13 +28,15 @@ class FlightSearchViewModel(
 
     fun onSearchQueryChange(newQuery: String) {
         searchQuery = newQuery
+        searchItems(searchQuery)
+        Log.i(TAG,searchQuery)
     }
 
     fun getAllAirports(): Flow<List<AirPort>> {
         return flightRepository.getAllAirPorts()
     }
 
-    fun searchItems(query: String) {
+    private fun searchItems(query: String) {
         viewModelScope.launch {
             flightRepository.searchForAirport(query)
                 .collect { items ->

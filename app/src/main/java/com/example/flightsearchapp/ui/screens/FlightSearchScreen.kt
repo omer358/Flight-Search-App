@@ -2,80 +2,114 @@
 
 package com.example.flightsearchapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.flightsearchapp.data.entities.AirPort
 
+
+private const val TAG = "FlightSearchScreen"
 @Composable
-fun FlightSearchScreen(modifier: Modifier = Modifier){
-    SearchBarExample()
+fun FlightSearchScreen(
+    viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.Factory),
+    modifier: Modifier = Modifier,
+) {
+    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
+    Log.i(TAG, searchResults.toString())
+    val airports by viewModel.getAllAirports().collectAsState(emptyList())
+    SearchBarExample(
+        allAirports = airports,
+        searchQuery = viewModel.searchQuery,
+        searchResults = searchResults,
+        onSearchQueryChange = { viewModel.onSearchQueryChange(it) }
+    )
 }
 
+
 @Composable
-fun SearchBarExample(modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf("") }
+fun SearchBarExample(
+    searchQuery: String,
+    searchResults: List<AirPort>,
+    onSearchQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    allAirports: List<AirPort>,
+) {
     var active: Boolean by remember { mutableStateOf(false) }
     Box(Modifier.fillMaxSize()) {
         SearchBar(
-            query = text,
-            onQueryChange = { text = it },
+            query = searchQuery,
+            onQueryChange = onSearchQueryChange,
             onSearch = { active = true },
             active = active,
             onActiveChange = {
                 active = it
             },
-            modifier = Modifier
-                .align(Alignment.TopCenter),
+            modifier = modifier.fillMaxWidth(),
             placeholder = { Text("Hinted search text") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) }
         ) {
-            repeat(4) { idx ->
-                val resultText = "Suggestion $idx"
-                ListItem(
-                    headlineContent = { Text(resultText) },
-                    supportingContent = { Text("Additional info") },
-                    leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(
+                    count = searchResults.size,
+                    key = { index -> searchResults[index].id },
+                    itemContent = { index ->
+                        val airport = searchResults[index]
+                        AirPortListItem(airport = airport)
+                    }
                 )
             }
         }
-
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            val list = List(100) { "Text $it" }
-            items(count = list.size) {
-                Text(list[it],
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp))
-            }
-        }
     }
+//    LazyColumn(
+//        verticalArrangement = Arrangement.spacedBy(8.dp)
+//    ) {
+//        items(
+//            items = allAirports,
+//            key = { airport -> airport.id }
+//        )  {
+//            Text(
+//              text = it.name,
+//                Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp)
+//            )
+//        }
+//    }
 }
 
+@Composable
+fun AirPortListItem(airport: AirPort, modifier: Modifier = Modifier) {
+    Card (
+        modifier = modifier.fillMaxWidth(),
+
+    ){
+        Text(text = airport.name)
+    }
+}
