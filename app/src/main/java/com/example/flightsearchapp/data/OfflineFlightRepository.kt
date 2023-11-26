@@ -8,6 +8,10 @@ class OfflineFlightRepository(
     private val airPortDao: AirPortDao,
 ) : FlightRepository {
     override fun searchForAirport(name: String): Flow<List<AirPort>> {
-        return airPortDao.searchForAirport(name)
+        return airPortDao.findAirPorts(name)
+    }
+
+    override fun getAllAirPorts(): Flow<List<AirPort>> {
+        return airPortDao.getAllAirPorts()
     }
 }

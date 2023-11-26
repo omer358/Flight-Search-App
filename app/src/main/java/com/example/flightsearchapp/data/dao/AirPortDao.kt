@@ -8,5 +8,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AirPortDao {
     @Query("SELECT * FROM airport WHERE name LIKE :name")
-    fun searchForAirport(name: String): Flow<List<AirPort>>
+    fun findAirPorts(name: String): Flow<List<AirPort>>
+
+    @Query("SELECT * FROM AIRPORT")
+    fun getAllAirPorts(): Flow<List<AirPort>>
+
 }
