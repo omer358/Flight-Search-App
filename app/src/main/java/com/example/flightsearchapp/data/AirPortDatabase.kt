@@ -5,13 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.flightsearchapp.data.dao.AirPortDao
-import com.example.flightsearchapp.data.entities.Favorite
+import com.example.flightsearchapp.data.entities.AirPort
 
-@Database(
-    entities = [AirPortDatabase::class, Favorite::class],
-    version = 1,
-    exportSchema = false
-)
+@Database(entities = [AirPort::class], version = 2, exportSchema = false)
 abstract class AirPortDatabase : RoomDatabase() {
     abstract fun airPortDao(): AirPortDao
 
@@ -24,7 +20,7 @@ abstract class AirPortDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context,
                     AirPortDatabase::class.java,
-                    "flight_search"
+                    "flight_search_database"
                 )
                     .fallbackToDestructiveMigration()
                     .createFromAsset("database/flight_search.db")
