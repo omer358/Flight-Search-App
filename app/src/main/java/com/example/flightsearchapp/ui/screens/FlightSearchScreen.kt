@@ -114,12 +114,17 @@ fun SearchBarExample(
 
 @Composable
 fun AirPortListItem(airport: AirPort, modifier: Modifier = Modifier) {
-    val randomColor = remember(airport.id) { generateRandomColor() }
+    val colorIndex = remember {
+    airport.id % staticColors.size}
+    Log.i(TAG, "AirPortListItem: $colorIndex")
+    val color = remember {
+        staticColors[colorIndex]
+    }
     ListItem(
         leadingContent = {
             // Display the first letter of the name in a circle
             val firstLetter = airport.name.first().toString()
-            CircleAvatar(letter = firstLetter, color = randomColor)
+            CircleAvatar(letter = firstLetter, color = color)
         },
         headlineContent = { Text(text = airport.name) },
         supportingContent = { Text(text = airport.iataCode) },
@@ -132,6 +137,16 @@ fun AirPortListItem(airport: AirPort, modifier: Modifier = Modifier) {
     )
     Divider()
 }
+
+
+val staticColors = listOf(
+    Color.Red,
+    Color.Green,
+    Color.Blue,
+    Color.Yellow,
+    Color.Magenta,
+    Color.Cyan
+)
 
 @Composable
 fun CircleAvatar(letter: String, color: Color) {
