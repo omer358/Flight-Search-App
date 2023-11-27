@@ -17,7 +17,7 @@ fun FlightSearchApp(modifier: Modifier = Modifier) {
 }
 
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun FlightSearchAppPreview() {
     FlightSearchAppTheme {

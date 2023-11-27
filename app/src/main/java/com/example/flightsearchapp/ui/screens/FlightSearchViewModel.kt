@@ -37,6 +37,7 @@ class FlightSearchViewModel(
     }
 
     private fun searchItems(query: String) {
+        Log.i(TAG, "searchItems: is being called")
         viewModelScope.launch {
             flightRepository.searchForAirport(query)
                 .collect { items ->
